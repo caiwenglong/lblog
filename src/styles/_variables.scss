@@ -1,0 +1,31 @@
+/* Variables */
+// 网站颜色
+$lightGray: #d1d5da; // 灰色：适用于边框
+$panBlue: #30B08F; // 深蓝色： 页面主样式，字体颜色，下划线标记等都适用
+$darkBlue: #339999; // 暗蓝色: 适用于成功提示信息背景色
+$panYellow: #E6A23C; // 黄色： 适用警告标记
+$darkRed: #CC0033; // 暗红色： 适用于错误提示
+$grayBlue: #669999; // 灰蓝色： 适用于没有状态的信息提示
+$white: #FFFFFF; // 白色
+
+// 页面固定常量
+$headerHeight: 60; // 页面header高度
+$sidebarWidth: 320;
+$transitionDuration: 0.3s; // 动画转换时间
+
+
+/*
+*   将数字转换成像素：默认值为页面头部高度值
+*/
+@function num2px($num) {
+  @return $num+px
+}
+
+
+
+// The :export directive is the magic sauce for webpack
+// https://mattferderer.com/use-sass-variables-in-typescript-and-javascript
+:export {
+  headerHeight: $headerHeight;
+  sidebarWidth: $sidebarWidth
+}
