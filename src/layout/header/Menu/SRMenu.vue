@@ -11,19 +11,36 @@
         @click="redirectTo('article-writing', {})">
         <span class="sr-menu-item__text">写作</span>
       </li>
+      <li
+        class="sr-menu__item"
+        @click="handleOpenLoginPanel(true)">
+        登录
+      </li>
     </ul>
+    <SRLogin
+      :dialog-form-visible='dialogFormVisible'
+      @isOpenLoginPanel='handleOpenLoginPanel'/>
   </div>
 </template>
 
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
-
+import SRLogin from '@/views/login/SRLogin.vue'
 @Component({
-  name: 'SRMenu'
+  name: 'SRMenu',
+  components: {
+    SRLogin
+  }
 })
 
 export default class extends Vue {
+  private dialogFormVisible = false // 是否显示登录框
+
+  // 弹出登录框
+  private handleOpenLoginPanel(flag: boolean) {
+    this.dialogFormVisible = flag
+  }
 }
 
 </script>

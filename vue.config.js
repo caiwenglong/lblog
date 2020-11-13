@@ -1,10 +1,29 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path')
-const name = 'SRBlog'
+const name = 'siri blog'
+const port = 8080
 
 module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? '/SRBlog/' : '/',
   lintOnSave: process.env.NODE_ENV === 'development',
+  devServer: {
+    port: port,
+    open: false,
+    proxy: {
+      '/user-api': {
+        target: 'http://localhost:8003',
+        ws: true,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/user-api': ''
+        }
+      }
+    },
+    overlay: {
+      warnings: false,
+      errors: true
+    }
+  },
   pwa: {
     name: name
   },

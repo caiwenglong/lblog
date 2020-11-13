@@ -4,7 +4,7 @@ import Layout from '@/layout/Layout.vue'
 
 Vue.use(VueRouter)
 
-const routes: Array<RouteConfig> = [
+export const constantRoutes: RouteConfig[] = [
   {
     path: '/',
     name: 'layout',
@@ -28,8 +28,8 @@ const routes: Array<RouteConfig> = [
     meta: { title: '文章' }
   },
   {
-    path: '/article',
-    name: 'article',
+    path: '/page-article',
+    name: 'pageArticle',
     component: Layout,
     children: [
       {
@@ -40,18 +40,40 @@ const routes: Array<RouteConfig> = [
           {
             path: '/article-list',
             component: () => import('@/views/article/components/ArticleList.vue'),
-            meta: { title: 'vue文章1' }
+            meta: { title: '文章详细页' }
+          },
+          {
+            path: '/article-writing',
+            component: () => import('@/views/article/components/ArticleWriting.vue'),
+            meta: { title: '文章写作页面' }
           }
-        ],
-        meta: { title: '文章列表1' }
+        ]
       }
     ],
     meta: { title: '文章1' }
   }
 ]
 
-const router = new VueRouter({
-  routes
+export const asyncRoutes: RouteConfig[] = []
+
+const createRouter = () => new VueRouter({
+  // mode: 'history',  // Disabled due to Github Pages doesn't support this, enable this if you need.
+  scrollBehavior: (to, from, savedPosition) => {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { x: 0, y: 0 }
+    }
+  },
+  base: process.env.BASE_URL,
+  routes: constantRoutes
 })
+
+const router = createRouter()
+
+export function resetRouter() {
+  const newRouter = createRouter();
+  (router as any).matcher = (newRouter as any).matcher // reset router
+}
 
 export default router
