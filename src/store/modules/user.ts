@@ -4,8 +4,9 @@ import { getToken, setToken, removeToken } from '@/utils/cookies'
 import router, { resetRouter } from '@/router'
 import { PermissionModule } from './permission'
 import store from '@/store'
+import i18n from '@/lang'
 
-export interface IUserState {
+export interface SRUserState {
   token: string;
   name: string;
   avatar: string;
@@ -15,13 +16,14 @@ export interface IUserState {
 }
 
 @Module({ dynamic: true, store, name: 'user' })
-class User extends VuexModule implements IUserState {
+class User extends VuexModule implements SRUserState {
   public token = getToken() || ''
   public name = ''
   public avatar = ''
   public introduction = ''
   public roles: string[] = []
   public email = ''
+  public mobile = ''
 
   @Mutation
   private SET_TOKEN(token: string) {
@@ -44,8 +46,8 @@ class User extends VuexModule implements IUserState {
   }
 
   @Mutation
-  private SET_ROLES(roles: string[]) {
-    this.roles = roles
+  private SET_ROLES(role: string[]) {
+    this.roles = role
   }
 
   @Mutation
@@ -53,13 +55,19 @@ class User extends VuexModule implements IUserState {
     this.email = email
   }
 
+  @Mutation
+  private SET_MOBILE(mobile: string) {
+    this.mobile = mobile
+  }
+
   @Action
   public async Login(userInfo: { username: string; password: string}) {
-    let { username, password } = userInfo
+    let {username, password} = userInfo
     username = username.trim()
     const { data } = await login({ username, password })
-    setToken(data.accessToken)
-    this.SET_TOKEN(data.accessToken)
+    setToken(data.token)
+    this.SET_TOKEN(data.token)
+    this.GetUserInfo(this.token)
   }
 
   @Action
@@ -70,24 +78,23 @@ class User extends VuexModule implements IUserState {
   }
 
   @Action
-  public async GetUserInfo() {
+  public async GetUserInfo(token: string) {
     if (this.token === '') {
       throw Error('GetUserInfo: token is undefined!')
     }
-    const { data } = await getUserInfo({ /* Your params here */ })
+    const { data } = await getUserInfo({ token: token })
     if (!data) {
       throw Error('Verification failed, please Login again.')
     }
-    const { roles, name, avatar, introduction, email } = data.user
+    const { role, nickname, avatar, mobile } = data.result
     // roles must be a non-empty array
-    if (!roles || roles.length <= 0) {
-      throw Error('GetUserInfo: roles must be a non-null array!')
+    if (!role || role.length <= 0) {
+      throw Error('GetUserInfo: role must be a non-null array!')
     }
-    this.SET_ROLES(roles)
-    this.SET_NAME(name)
+    this.SET_ROLES(role)
+    this.SET_NAME(nickname)
     this.SET_AVATAR(avatar)
-    this.SET_INTRODUCTION(introduction)
-    this.SET_EMAIL(email)
+    this.SET_EMAIL(mobile)
   }
 
   @Action
@@ -96,9 +103,9 @@ class User extends VuexModule implements IUserState {
     const token = role + '-token'
     this.SET_TOKEN(token)
     setToken(token)
-    await this.GetUserInfo()
+    await this.GetUserInfo(this.token)
     resetRouter()
-    // Generate dynamic accessible routes based on roles
+    // Generate dynamic accessible routes based on role
     PermissionModule.GenerateRoutes(this.roles)
     // Add generated routes
     router.addRoutes(PermissionModule.dynamicRoutes)

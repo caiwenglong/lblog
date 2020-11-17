@@ -3,23 +3,32 @@
     <ul class="sr-menu__list clearfix">
       <li
         class="sr-menu__item isActive"
-        @click="redirectTo('article-list-category', {})">
+        @click="redirectTo('article-list', {})">
         <span class="sr-menu-item__text">文章</span>
       </li>
       <li
+        v-if='isLogin'
         class="sr-menu__item"
         @click="redirectTo('article-writing', {})">
         <span class="sr-menu-item__text">写作</span>
       </li>
       <li
+        v-if='!isLogin'
         class="sr-menu__item"
         @click="handleOpenLoginPanel(true)">
         登录
       </li>
+      <li
+        v-if='isLogin'
+        class="sr-menu__item sr-user"
+        @click="handleOpenLoginPanel(true)">
+        <span class='sr-user__avatar'>{{username}}</span>
+        <span class='sr-user__name'>{{avatar}}</span>
+      </li>
     </ul>
     <SRLogin
       :dialog-form-visible='dialogFormVisible'
-      @isOpenLoginPanel='handleOpenLoginPanel'/>
+      @emitOpenLoginPanel='handleOpenLoginPanel'/>
   </div>
 </template>
 
@@ -27,6 +36,9 @@
 
 import { Component, Vue } from 'vue-property-decorator'
 import SRLogin from '@/views/login/SRLogin.vue'
+import { UserModule } from '@/store/modules/user'
+import { Dictionary } from 'vue-router/types/router'
+
 @Component({
   name: 'SRMenu',
   components: {
@@ -36,10 +48,33 @@ import SRLogin from '@/views/login/SRLogin.vue'
 
 export default class extends Vue {
   private dialogFormVisible = false // 是否显示登录框
+  private isLogin = false
+  get username() {
+    return UserModule.name
+  }
+
+  get avatar() {
+    return UserModule.avatar
+  }
 
   // 弹出登录框
   private handleOpenLoginPanel(flag: boolean) {
     this.dialogFormVisible = flag
+  }
+
+  private redirectTo(name: string, params: Dictionary<string>) {
+    this.$router.push({ name: name, params: params })
+  }
+
+  private async initData() {
+    if (UserModule.token) {
+      await UserModule.GetUserInfo(UserModule.token)
+      this.isLogin = true
+    }
+  }
+
+  created() {
+    this.initData()
   }
 }
 

@@ -26,6 +26,7 @@ router.beforeEach(async(to: Route, _: Route, next: any) => {
   NProgress.start()
 
   // Determine whether the user has logged in
+  debugger
   if (UserModule.token) {
     if (to.path === '/login') {
       // If is logged in, redirect to the home page
@@ -36,7 +37,7 @@ router.beforeEach(async(to: Route, _: Route, next: any) => {
       if (UserModule.roles.length === 0) {
         try {
           // Note: roles must be a object array! such as: ['admin'] or ['developer', 'editor']
-          await UserModule.GetUserInfo()
+          await UserModule.GetUserInfo(UserModule.token)
           const roles = UserModule.roles
           // Generate accessible routes map based on role
           PermissionModule.GenerateRoutes(roles)

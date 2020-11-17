@@ -1,15 +1,11 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { SRUserState } from './modules/user'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
-  state: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
-  modules: {
-  }
-})
+export interface SRRootState {
+  user: SRUserState
+}
+
+export default new Vuex.Store<SRRootState>({})

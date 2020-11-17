@@ -14,6 +14,7 @@ export const constantRoutes: RouteConfig[] = [
       {
         path: '/article',
         name: 'article',
+        redirect: '/article-list',
         component: () => import('@/views/article/Article.vue'),
         children: [
           {
@@ -39,11 +40,13 @@ export const constantRoutes: RouteConfig[] = [
         children: [
           {
             path: '/article-list',
+            name: 'article-list',
             component: () => import('@/views/article/components/ArticleList.vue'),
             meta: { title: '文章详细页' }
           },
           {
             path: '/article-writing',
+            name: 'article-writing',
             component: () => import('@/views/article/components/ArticleWriting.vue'),
             meta: { title: '文章写作页面' }
           }

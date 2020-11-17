@@ -31,7 +31,6 @@ import SidebarItem from '@/components/sidebar/SidebarItem.vue'
 
 export default class extends Vue {
   get routes() {
-    console.log(this.$router.options.routes)
     return this.$router.options.routes
   }
 

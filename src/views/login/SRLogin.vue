@@ -75,7 +75,6 @@ export default class extends Vue {
   private passwordType = 'password'
   private capsTooltip = false
   private formLabelWidth = '120px'
-  private loading = false
   private redirect?: string
   private otherQuery: Dictionary<string> = {}
   private validateUsername = (rule: any, value: string, callback: Function) => {
@@ -109,11 +108,11 @@ export default class extends Vue {
 
   // 显示登录面板
   private handleOpenDialogForm(flag: boolean) {
-    this.$emit('isOpenLoginPanel', flag)
+    this.$emit('emitOpenLoginPanel', flag)
   }
 
   private handleBeforeClose() {
-    this.$emit('isOpenLoginPanel', false)
+    this.$emit('emitOpenLoginPanel', false)
   }
 
   private checkCapslock(e: KeyboardEvent) {
@@ -144,17 +143,13 @@ export default class extends Vue {
   private handleLogin() {
     (this.$refs.loginForm as ElForm).validate(async(valid: boolean) => {
       if (valid) {
-        this.loading = true
-        await UserModule.Login(this.loginForm)
-        this.$router.push({
-          path: this.redirect || '/',
-          query: this.otherQuery
-        })
-        // Just to simulate the time of the request
-        setTimeout(() => {
-          this.loading = false
-          this.handleOpenDialogForm(false)
-        }, 0.5 * 1000)
+        this._tools.eleEnc.eleLoading()
+        try {
+          await UserModule.Login(this.loginForm)
+        } catch (e) {
+          console.log(e)
+        }
+        this._tools.eleEnc.closeEleLoading()
       } else {
         return false
       }
@@ -163,8 +158,6 @@ export default class extends Vue {
 
   @Watch('$route', { immediate: true })
   private onRouteChange(route: Route) {
-    // TODO: remove the "as Dictionary<string>" hack after v4 release for vue-router
-    // See https://github.com/vuejs/vue-router/pull/2050 for details
     const query = route.query as Dictionary<string>
     if (query) {
       this.redirect = query.redirect

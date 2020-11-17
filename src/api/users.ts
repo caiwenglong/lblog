@@ -9,8 +9,8 @@ export const getUsers = (params: any) =>
 
 export const getUserInfo = (data: any) =>
   request({
-    url: '/user-center/user/info',
-    method: 'post',
+    url: '/user-center/user/getInfo',
+    method: 'get',
     data
   })
 
