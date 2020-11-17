@@ -17,6 +17,14 @@ module.exports = {
         pathRewrite: {
           '^/user-api': ''
         }
+      },
+      '/article-api': {
+        target: 'http://localhost:8002',
+        ws: true,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/article-api': ''
+        }
       }
     },
     overlay: {
